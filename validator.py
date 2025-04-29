@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from fastapi import FastAPI, Path, Query
+from fastapi import FastAPI, Path, Query, HTTPException
 from pydantic import BaseModel, Field, AfterValidator
 
 from typing import List, Optional, Annotated
@@ -89,7 +89,7 @@ async def get_movie_by_id(movie_id: int = Path(..., gt=0)):
     for movie in MOVIES:
         if movie["ID"] == movie_id:
             return movie
-    return {"error": "Movie not found"}
+    raise HTTPException(status_code=404, detail="Movie not found")
 
 @app.get("/movies_by_genre")
 async def get_movies_by_genre(genre: str = Query(..., min_length=3, max_length=50)):
